@@ -15,7 +15,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="system_diagram_laptop.svg">
+   sodipodi:docname="system_diagram_laptop.svg"
+   inkscape:export-filename="C:\Users\jaseg\Documents\GitHub\tachibana_talk\system_diagram_laptop.svg.png"
+   inkscape:export-xdpi="299.90985"
+   inkscape:export-ydpi="299.90985">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,15 +28,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="247.05598"
-     inkscape:cy="215.29139"
+     inkscape:zoom="1.2433572"
+     inkscape:cx="373.58533"
+     inkscape:cy="221.40493"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="1358"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      fit-margin-top="5"
@@ -48,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -120,17 +123,19 @@
            x="240.41631"
            y="408.38995" /></flowRegion><flowPara
          id="flowPara4144-8-7">EC</flowPara></flowRoot>    <flowRoot
-       transform="translate(134.60932,-162.88718)"
        xml:space="preserve"
        id="flowRoot4138-1-6-0"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+       style="font-style:normal;font-weight:normal;font-size:37.05799866px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.79160358,0,0,0.79160358,30.882951,39.590335)"><flowRegion
          id="flowRegion4140-1-1-3"><rect
            id="rect4142-3-8-3"
-           width="116.67262"
-           height="64.39724"
-           x="240.41631"
-           y="408.38995" /></flowRegion><flowPara
-         id="flowPara4144-8-7-8">橘</flowPara></flowRoot>    <path
+           width="166.21068"
+           height="134.91792"
+           x="375.18793"
+           y="246.29053"
+           style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
+         id="flowPara4775">Inter-</flowPara><flowPara
+         id="flowPara4779">ceptor</flowPara></flowRoot>    <path
        style="fill:#ff6600;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 80.68652,62.159919 c -5.30338,5.30339 -10.60677,10.60677 -15.91015,15.91016 5.30338,5.30338 10.60677,10.60677 15.91015,15.91015 0,-3.11458 0,-6.22917 0,-9.34375 22.89648,0 45.79297,0 68.68945,0 0,-4.3776 0,-8.75521 0,-13.13281 -22.89648,0 -45.79297,0 -68.68945,0 0,-3.11458 0,-6.22917 0,-9.34375 z"
        id="path4328-8"
