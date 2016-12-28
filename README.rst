@@ -9,8 +9,11 @@
 Regaining Trust in Everyday Computers
 =====================================
 
-What's the problem?
-===================
+Introduction
+============
+
+What's the Problem?
+-------------------
 
 We're using computers in most parts of our lives today. For my personal taste, frictionless communication between people
 is one of the most important facilities computers provide us with today. One of the most central properties of many such
@@ -29,22 +32,102 @@ commodity operating systems on a commodity hardware platform such as x86-64 or s
 
 .. image:: slides/slide05.png
 
-Alas, the computers we use today to run these systems can barely live up to their job as ultimate safekeepers of private
-information. They are /extremely/ complex in hardware and running a very baroque mess of software. The above picture is
-the block diagram of a Lenovo x230 laptop. As you can already see, this is an extremely complex system and in order to
-secure it one has to properly manage its many components while being aware of the complex interactions that may arise
-between them. To make matters worse, some of these components (which are highlighted in red) are running closed-source
-firmware. As you can see, one cannot realistically audit this enormous amount of undocumented, sometimes even
-deliberately obfuscated code.
+The picture above is a block diagram of a Lenovo x230 Laptop, an Intel-based platform. You can already see that this is
+a highly complex system. In practice, this comes with lots of interdependencies between components.
 
-All of this complexity and the massive amonut of highly-privileged, network-connected, secret and unauditable firmware
-exposes a massive attack surface to any (`well-funded attacker<https://nsa.gov/>`__). Even if a user is running a system
-secured according to the state of the art, e.g. running QubesOS in a Secure Boot configuration, massive attack surface
-remains. There have been numerous flaws found in both the linux kernel and the Xen Hypervisor. Proprietary firmware has
-not fared better, with published hacks of both AMD's SMU firmware and Quallcomm's QSee ARM TrustZone firmware.
+To make matters worse, all of the components highlighted in red can be assumed to run proprietary, un-auditable
+software.
+
+All of this complexity and the massive amonut of highly-privileged, network-connected, secret firmware exposes a massive
+attack surface to any (`well-funded attacker<https://nsa.gov/>`__). Even if a user is running a system secured according
+to the state of the art, e.g. running QubesOS in a Secure Boot configuration, massive attack surface remains. There have
+been numerous flaws found in both the linux kernel and the Xen Hypervisor. Proprietary firmware has not fared better,
+with published hacks of both AMD's SMU firmware and Quallcomm's QSee ARM TrustZone firmware.
+
+Mission Statement
+-----------------
+
+In my opinion, we have to solve this issue of trust. Alas, we cannot simply audit the system as-is, since auditing the
+enormous amount of binary firmware contained within the system is too much work and and most of this work would have to
+be re-done for every new platform. From my point of view, the most realistic way to break this tie is to augment the
+system with a simple, auditable coprocessor so that trust can be placed there instead of in the lost rest of the system.
+
+Placing the trust boundary
+--------------------------
+
+Looking at the above block diagram, we can see that in order to rule out plaintext data being handled by subsystems
+running proprietary firmware, we have to place our trust boundary beyond one very important component: The CPU itself,
+for it and the PCH both are running untrusted firmware.
+
+We do have the constraint that at keyboard and display we need to have plaintext data coming through since
+"crypto-glasses" are not yet a thing. The only remaining place where we can transform untrusted ciphertext into trusted
+plaintext thus is on the display and keyboard matrix buses between PCH and Display, and EC and keyboard, respectively.
+In the following discussion, this device will be named "Interceptor".
+
+.. image:: slides/slide08.png
+
+Device Overview
+===============
+
+Outside view
+------------
+
+The Interceptor will sit between display and PCH on the LVDS bus as well as between keyboard and EC on the keyboard
+matrix lines. LVDS is a comparatively simple, high-speed digital display bus. Electrically it consists of 4-10
+differential pairs carrying clock and data signals without any framing information beyond a serialized form of vertical
+and horizontal sync signals known from the age of VGA. LVDS is used on almost all older laptops (as well as internally
+in LCD monitors). More modern laptops tend to use eDP (embedded DisplayPort) instead, which is a somewhat more complex,
+packet based bus (though mostly identical to LVDS on the physical layer).
+
+The keyboard itself is implemented as nothing but a simple, passive matrix of switches that is continuously being
+scanned by the embedded controller. Key events are then forwarded to the CPU via an LPC bus.
+
+.. image:: slides/slide09.png
+
+Compatibility
+-------------
+
+Since the Interceptor is inserted into the system at a /very/ low level, by and in itself it is very agnostic to the
+underlying system. That means that apart from minor differences in host system integration, without any adaption of the
+hardware or firmware it will work across operating systems and even platforms. The latter means that one could even
+insert an Interceptor into a contemporary smartphone (ignoring power and space constraints for now), since modern
+smartphones are using a display bus similar to the ones used in desktop systems. The primary input method of most
+smartphones is the touchscreen, which generally is connected via I2C, which can also easily be intercepted as a simple
+serial protocol.
+
+.. image:: slides/slide10.png
+
+General Implementation
+----------------------
+
+LVDS and eDP are very high-bandwidth digital buses. The most obvious device to handle these buses is probably an FPGA.
+FPGAs do include serialization and deserialization logic that can easily be adapted to handle all common display buses
+and can easily handle simple processing on data at this bandwidth. Furthermore, FPGAs are fundamentally reasonably
+simple devices. Compared to e.g. an ARM SoC (such as they are made by Qualcomm, TI or Freescale), its hardware design is
+simpler by orders of magnitude. On one hand, this increases the likelihood of verification of one such device ever
+happening by keeping the effort required non-astronomical. On the other hand, this configurability allows deep
+customization of the used architecture to our needs.
+
+Controlling an Interceptor
+--------------------------
+
+In the initial iteration, the Interceptor only has LVDS and keyboard access--no other buses. This greatly reduces design
+complexity and attack surface, but it makes controlling the Interceptor from the host system challenging. The initial
+approach is to have the area available to it for plaintext rendering used for control data and ciphertext as is shown in
+the following image.
+
+.. image:: slides/slide12.png
+
+In almost all systems, the outermost nested display area is the user's desktop environment. Inside, there may be a
+number of independent application windows, each of which may wish to display encrypted data to the user. This encrypted
+data (henceforth called "payload") is displayed inside the application window by formatting a bitmap to include some
+markers and a header with meta-data, followed by the raw ciphtertext interpreted as RGB pixel data (potential correction
+for gamma lookup tables etc. may apply here). The Interceptor is continuously scannig the incoming pixel data for this
+marker parttern before forwarding it to the display.
 
 About the author
-----------------
+================
+
 jaseg is a student of computer science at TU Berlin, electronics and programming hobbyist and is a student employee at
 Security Research Labs GmbH.
 
