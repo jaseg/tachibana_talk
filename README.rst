@@ -125,6 +125,78 @@ markers and a header with meta-data, followed by the raw ciphtertext interpreted
 for gamma lookup tables etc. may apply here). The Interceptor is continuously scannig the incoming pixel data for this
 marker parttern before forwarding it to the display.
 
+Interceptor Implementation
+==========================
+
+Overview
+--------
+
+The following diagram shows a proposal for an interceptor design based on some preliminary experiments.
+
+.. image:: slides/slide14.png
+
+One goal of this design is to keep subsystems entrusted with different responsibilities physically seperated to lessen
+the chance of information leaking in case of some components exhibiting unintended behavior. The two most critical data
+buses carrying keyboard and display data are only connected to components that actually need access to their respective
+signal.
+
+Display Data Handling
+---------------------
+
+Display data arrives via LVDS (and in a future revision possibly the packet-based eDP) at the LVDS deserializer. The
+high-speed serial LVDS signal is converted into low-speed parallel pixel data for FPGA-internal processing. The pixel
+data is forwarded to the pattern detector. The pattern detector is a device that is scanning incoming pixel data for a
+fixed pattern signifying the start-of-payload. In case the pattern is not found and the incoming pixel data is not part
+of an active payload, the pixel data is directly forwarded to the frame buffer for intermediate storage ([#triplebuf]_).
+
+.. [#triplebuf] This is necessary to cross from the LVDS input clock domain into the system clock domain. Clocking the
+    entire system from the LVDS clock is not a realistic option since there are no guarantees made on when this clock
+    will be active or its performance characteristics. Especially the serializer should probably be fed from a reliable,
+    clean clock source to avoid problems with marginal downstream devices. In contrast to a fully source-synchronous
+    implementation this mostly comes at the cost of a higher delay (up to two frames) as compared to several pixels up
+    to a few full lines. However, it does provide potential for comparatively painless future extension of the system to
+    mutiple inputs or outputs.
+
+The output of the pixel data buffer is fed into the buffer switch which in case no payload is being processed will
+directly forward it to the output LVDS serializer, which is connected to the display itself. A consequence of this
+design is that the raw display signal, except for specific payload, will never touch any part of the system except for
+(de)serializer, frame buffer, pattern detector and buffer switch--and all of these devices are implemented in logic
+without firmware or complex state machines.
+
+Payload Format
+--------------
+.. Header format and markers
+
+The general payload format is that 
+
+Payload Handling
+----------------
+
+If the payload detector detects a payload, it will divert the incoming payload pixel data to the payload buffer. After
+receiving the payload is been completed, the application processor will be notified and starts processing the payload.
+After some simple protocol decoding and unwrapping of the embedded cryptographic data this data will be forwarded to the
+crypto coprocessor. The crypto coprocessor will perform any necessary cryptographic operations and forward the decrypted
+data to the renderer. The renderer most likely will be a processor running the complex software stack necessary to
+handle sensible rendering of any appreciable number of writing systems. It renders the incoming unicode data into the
+RGB pixel data render buffer. The render buffer content is then dynamically inserted into the in-flight display data
+stream by the buffer switch in the same position where the original payload has been extracted.
+
+Crypto Coprocessor Considerations
+---------------------------------
+
+The crypto coprocessor is meant to do most of the cryptographic operations that involve either of cryptographic key
+material or plaintext data. Its firmware must be kept as simple as possible and any higher logic that can be kept out of
+it without compromising either plaintext or key security should be done inside the application processor.
+
+For handling of long-term persistent keys optionally one might consider adding a Secure Access Module/Smartcard to the
+system that is connected to the crypto coprocessor.
+
+User Interfaces Considerations
+==============================
+
+Hardware Security Module
+========================
+
 About the author
 ================
 
