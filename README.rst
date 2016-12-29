@@ -40,7 +40,7 @@ To make matters worse, all of the components highlighted in red can be assumed t
 software.
 
 All of this complexity and the massive amonut of highly-privileged, network-connected, secret firmware exposes a massive
-attack surface to any (`well-funded attacker<https://nsa.gov/>`__). Even if a user is running a system secured according
+attack surface to any `well-funded attacker <https://nsa.gov/>`_. Even if a user is running a system secured according
 to the state of the art, e.g. running QubesOS in a Secure Boot configuration, massive attack surface remains. There have
 been numerous flaws found in both the linux kernel and the Xen Hypervisor. Proprietary firmware has not fared better,
 with published hacks of both AMD's SMU firmware and Quallcomm's QSee ARM TrustZone firmware.
