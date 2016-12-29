@@ -4,7 +4,7 @@
 :GPG: 7657 BF97 C679 07BD 7BC4  4B44 2877 9768 6E40 E32F
 :status: This is work in progress.
 :revision: 1
-:copyright: CC-By-Sa
+:copyright: CC-BY-SA
 
 =====================================
 Regaining Trust in Everyday Computers
