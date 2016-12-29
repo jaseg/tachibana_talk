@@ -179,7 +179,7 @@ Payload Format
 
 * A monotonically increasing sequence number should be used to prevent replay attacks.
 
-The payload data itself may require some processing beyond `reinterpret_cast<pixmap>` to evade gamma correction and
+The payload data itself may require some processing beyond ``reinterpret_cast<pixmap>`` to evade gamma correction and
 other color transformations done on the graphics card. Worthy of consideration is the fact that not every display uses
 8bit per color, some use 10bit or 6bit (as is the case in Lenovo's x230 laptop).
 
@@ -225,8 +225,8 @@ keyboard matrix. This might be used to have a discrete logic circuit handle keyb
 Interceptor/Interceptor emulation activated). Placing this logic in a discrete circuit might provide some more security
 against an Interceptor compromise as simple digital logic circuits cannot be reprogrammed as opposed to an FPGA.
 
-Special care must be taken to proof the Interceptor user interface against UI element spoofing ("Please enter your
-password here: _____ ") and to deal with the risk of the user not noticing a change in trust level and entering her
+Special care must be taken to proof the Interceptor user interface against UI element spoofing (``Please enter your
+password here: _____``) and to deal with the risk of the user not noticing a change in trust level and entering her
 password into the untrusted host without noticing. The latter is a risk especially considering that many professional
 users type their passwords without actually understanding or even just looking at their system.
 
