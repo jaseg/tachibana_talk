@@ -164,7 +164,27 @@ Payload Format
 --------------
 .. Header format and markers
 
-The general payload format is that 
+* Generally, the payload consists of a header in the top-left corner followed by the binary payload content. in a
+  rectangular area. The top-left corner is chosen here since it is the first part of that area that is sent over the
+  wire in all common digital display buses. The header consists of size information, a fixed marker, a checksum of the
+  entire payload and a cryptographic signature based on a secret key shared between host and Interceptor. This key is
+  initialized once during the initial configuration of the Interceptor. Regular key rollover may not be necessary as
+  there is not an awful lot of ways that this key itself could leak without a total compromise of the system. It may be
+  sensible to assume that an untrusted party on the host might be able to access some rendered payload buffer bitmaps
+  through e.g. buggy graphics drivers, so just treating the key as a password and prepending it to the payload header
+  might not be a good idea.
+
+* The frame checksum is necessary since corruption of the payload pixmap is likely even during normal operation, e.g.
+  due to a dialog popping up in front of the application rendering it.
+
+* A monotonically increasing sequence number should be used to prevent replay attacks.
+
+The payload data itself may require some processing beyond `reinterpret_cast<pixmap>` to evade gamma correction and
+other color transformations done on the graphics card. Worthy of consideration is the fact that not every display uses
+8bit per color, some use 10bit or 6bit (as is the case in Lenovo's x230 laptop).
+
+In that same vein, geometric distortions done e.g. by a window manager (I'm looking at you, compiz wobbly windows...)
+are probably not worth adressing.
 
 Payload Handling
 ----------------
