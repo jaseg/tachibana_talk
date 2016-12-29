@@ -149,14 +149,6 @@ data is forwarded to the pattern detector. The pattern detector is a device that
 fixed pattern signifying the start-of-payload. In case the pattern is not found and the incoming pixel data is not part
 of an active payload, the pixel data is directly forwarded to the frame buffer for intermediate storage ([#triplebuf]_).
 
-.. [#triplebuf] This is necessary to cross from the LVDS input clock domain into the system clock domain. Clocking the
-    entire system from the LVDS clock is not a realistic option since there are no guarantees made on when this clock
-    will be active or its performance characteristics. Especially the serializer should probably be fed from a reliable,
-    clean clock source to avoid problems with marginal downstream devices. In contrast to a fully source-synchronous
-    implementation this mostly comes at the cost of a higher delay (up to two frames) as compared to several pixels up
-    to a few full lines. However, it does provide potential for comparatively painless future extension of the system to
-    mutiple inputs or outputs.
-
 The output of the pixel data buffer is fed into the buffer switch which in case no payload is being processed will
 directly forward it to the output LVDS serializer, which is connected to the display itself. A consequence of this
 design is that the raw display signal, except for specific payload, will never touch any part of the system except for
@@ -191,15 +183,56 @@ it without compromising either plaintext or key security should be done inside t
 For handling of long-term persistent keys optionally one might consider adding a Secure Access Module/Smartcard to the
 system that is connected to the crypto coprocessor.
 
+Any SRAM location or register that is used to store a key for seconds or longer must be periodically be inverted to
+avoid data-dependent SRAM cell degradation and the possibility of key compromise. Practically, this means that for any
+cryptographic key to be stored in SRAM two memory buffers must be prepared, one keeping the actual key and one its
+bitwise inverse. Periodically (say, every 1s), both buffers are inverted bitwise and all references to the non-inverted
+buffer are updated. This makes sure that over a long time, every memory location contains both a logic 1 and a logic 0
+for exactly half the time independent of the actual key bit stored in this location.
+
 User Interfaces Considerations
 ==============================
 
 Hardware Security Module
 ========================
 
+A natural extension of the pure cryptographic security module proposed here is to incorporate actual Hardware Security
+Module (HSM) features into it. This mostly encompasses having a number of active intrusion detection techniques that are
+continuously being monitored by a circuit powered from an internal backup battery. In case an intrusion is detected,
+all cryptographic secrets are securely wiped.
+
+1. Traditional, mesh-based intrusion detection can be very effective if implemented correctly. A combination of a
+   gapless, overlapping security mesh printed in silver ink on plastic foil (a process that is used e.g. for rubber dome
+   keyboard switch membranes) wrapped around the HSM PCB on all edges potted with a chemically resistant, opaque,
+   slightly flexible epoxy resin proved to be very efficient against simple attempts at mechanical intrusion.
+2. A number of randomly tangled wires acting as antennae stuffed between the HSM PCB and the inside of an electrically
+   conducting enclosure that are continuously monitored for their pairwise complex frequency response by a system
+   similar to a vector network analyzer. Ideally, any distortion of these wires or the surrounding potting material
+   acting as a dielectric would change these characteristics. Further research is necessary to examine the practical
+   sensitivity of such a system and its feasibility concerning price and energy consumption.
+3. Ultrasonic transducers planted in several spots (e.g. on the surface of the HSM PCB) on the inside of the HSM are
+   continuously monitored for their pairwise ultrasonic coupling characteristics versus frequency. Ideally, any
+   mechanical disturbance of the HSM would change its internal acoustic propagation characteristics to a measurable
+   extent.
+4. Several highly sensitive photodiodes are placed on the HSM PCB and encapsulated in a clear potting material. The
+   resulting object is encased in a clear, chemically resistant epoxy potting material filled with ground (but not
+   powdered) triboluminescent ("smash-glow" or "friction-glow") crystals. This epoxy layer is optically shielded from
+   environmental light by applying a thick coating of dark lacquer on its surface. Ideally, any mechanical disturbance
+   of the triboluminescent layer would result in the emission of small flashes of light that can easily be detected by
+   photodiodes. This technique might prove very effective against all types of mechanical attacks while still being
+   comparatively cheap and very low-energy.
+
 About the author
 ================
 
-jaseg is a student of computer science at TU Berlin, electronics and programming hobbyist and is a student employee at
-Security Research Labs GmbH.
+jaseg is a student of computer science at TU Berlin, an electronics and programming hobbyist and is a student employee
+at Security Research Labs GmbH.
+
+.. [#triplebuf] This is necessary to cross from the LVDS input clock domain into the system clock domain. Clocking the
+    entire system from the LVDS clock is not a realistic option since there are no guarantees made on when this clock
+    will be active or its performance characteristics. Especially the serializer should probably be fed from a reliable,
+    clean clock source to avoid problems with marginal downstream devices. In contrast to a fully source-synchronous
+    implementation this mostly comes at the cost of a higher delay (up to two frames) as compared to several pixels up
+    to a few full lines. However, it does provide potential for comparatively painless future extension of the system to
+    mutiple inputs or outputs.
 
