@@ -31,7 +31,9 @@ how good its cryptographical foundations, any system is as suceptible as the und
 Signal, the things we write and that these systems aim to securely transmit is processed inside a programm running on a
 commodity operating systems on a commodity hardware platform such as x86-64 or some ARM-based smartphone.
 
+
 .. image:: slides/slide05.png
+
 
 The picture above is a block diagram of a Lenovo x230 Laptop, an Intel-based platform. You can already see that this is
 a highly complex system. In practice, this comes with lots of interdependencies between components.
