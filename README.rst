@@ -1,6 +1,7 @@
 :Author: jaseg
-:Contact: 33c3@jaseg.net
 :date: $Date: 2016-12-27 18:15:00 +0100 (Tue, 27 Sep 2016) $
+:Contact: 33c3@jaseg.net
+:GPG: 7657 BF97 C679 07BD 7BC4  4B44 2877 9768 6E40 E32F
 :status: This is work in progress.
 :revision: 1
 :copyright: CC-By-Sa
@@ -97,6 +98,10 @@ serial protocol.
 
 .. image:: slides/slide10.png
 
+The Interceptor may also be adapted for common desktop computers. DisplayPort is electrically and on a protocol level
+identical to eDP and can be used with most desktop computers, in the worst case using adapters. For keyboard support,
+USB host and device support would be necessary since almost all recent desktop keyboards are connected via USB HID.
+
 General Implementation
 ----------------------
 
@@ -192,6 +197,18 @@ for exactly half the time independent of the actual key bit stored in this locat
 
 User Interfaces Considerations
 ==============================
+
+If implemented in a Lenovo x230 laptop, the integrated LEDs of the keyboard (power, speaker mute, mic mute and keyboard
+backlight if available) can be repurposed to directly display some state to the user, e.g. current input trust level.
+The function ("fn") key is hardwired to a separate signal line on the keyboard connector and is not part of the regular
+keyboard matrix. This might be used to have a discrete logic circuit handle keyboard trust level (passthrough/sent to
+Interceptor/Interceptor emulation activated). Placing this logic in a discrete circuit might provide some more security
+against an Interceptor compromise as simple digital logic circuits cannot be reprogrammed as opposed to an FPGA.
+
+Special care must be taken to proof the Interceptor user interface against UI element spoofing ("Please enter your
+password here: _____ ") and to deal with the risk of the user not noticing a change in trust level and entering her
+password into the untrusted host without noticing. The latter is a risk especially considering that many professional
+users type their passwords without actually understanding or even just looking at their system.
 
 Hardware Security Module
 ========================
